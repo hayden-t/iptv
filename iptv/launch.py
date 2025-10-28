@@ -27,6 +27,8 @@ if __name__ == "__main__":
         elif platform == "win32":
             os.environ["PATH"] = f"{os.environ['PATH']};{chrome_path}"
             chrome = "chrome.exe"
+        elif platform == "linux":
+            chrome = 'google-chrome'
         else:
             logger.error(f"{platform} is currently unsupported")
 
@@ -34,8 +36,10 @@ if __name__ == "__main__":
         os.environ["CHROME_PORT"] = proxy_port
 
         cmd = f"{chrome} --remote-debugging-port={proxy_port} --hide-crash-restore-bubble --user-data-dir=./ChromeProfile"
+        if platform == "linux":
+            cmd = cmd + " --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'"
         logger.info(f"Running {cmd}")
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,shell=True)#i had to add shell=True for my debian, maybe its ok to use for other os 
         logger.info(
             f'Launcher has been started at port {proxy_port}.  Begin parsing.')
 
